@@ -1,0 +1,149 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+
+{% comment %} <h2 style="text-align: center">Pay via credit card</h2> {% endcomment %}
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.payment/3.0.0/jquery.payment.min.js"></script>
+ <div class="padding">
+        <div class="row">
+            <div class="container-fluid d-flex justify-content-center">
+                <div class="col-sm-8 col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <span>CREDIT/DEBIT CARD PAYMENT</span>
+                                
+                            </div>
+
+                            <div class="col-md-6 text-right" style="margin-top: -5px;">
+
+                                  <img src="https://img.icons8.com/color/36/000000/visa.png">
+                                  <img src="https://img.icons8.com/color/36/000000/mastercard.png">
+                                  <img src="https://img.icons8.com/color/36/000000/amex.png">
+                                           
+                            </div>      
+
+                        </div>    
+  
+                        </div>
+                        <form id="form">
+                          <div id="user-info">
+                            
+                            <div class="form-field" style="width: 100%">
+                              <label for="cc-number" class="control-label">CARD NUMBER</label>
+                              <input required class="input-lg form-control cc-exp" type="tel" name="name" placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;" required>
+                            </div>
+
+                        
+                            <div class="row">
+                            <div class="col-md-6">
+                              <label for="cc-exp" class="control-label">CARD EXPIRY</label>
+                              <input required class="form-control" type="tel" name="name"autocomplete="cc-exp" placeholder="&bull;&bull; / &bull;&bull;" required>
+                            </div>
+                          </div>
+                         
+
+                            <div class="form-field">
+                              <label for="cc-cvc" class="control-label">CARD CVC</label>
+                              <input id="cc-cvc" type="tel" required class="input-lg form-control cc-cvc" autocomplete="off" placeholder="&bull;&bull;&bull;&bull;" required>
+                            </div>
+
+                            <div class="form-field" style="width: 100%">
+                              <label for="numeric" class="control-label">CARD HOLDER NAME</label>
+                              <input  type="text" required class="input-lg form-control">
+                            </div>
+                           
+                        
+                          <hr>
+                          <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
+                        </form>
+                        </div>
+                        
+                        <br>
+                        <div class="box-element hidden" id="payment-info">
+                        <h5>Confirm payment?</h5>
+                        <a href="{% url 'confirmation' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Pay</a>
+                        <div id="paypal-button-container"></div>
+                        </div>
+                        
+                        </div>
+                        
+                        
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                        
+                        </div>
+                        
+                        <style>
+                        .padding{
+                        padding: 0rem !important;
+                        }
+                        
+                        .form-control:focus {
+                        box-shadow: 10px 0px 0px 0px #ffffff !important;
+                        border-color: #4ca746;
+                        }
+                        </style>
+                        
+                       
+                        
+<script type="text/javascript">
+        var shipping = '{{order.shipping}}'
+                        
+             if (shipping == 'true'){
+              document.getElementById('shipping-info').innerHTML = ''
+                }
+                        
+              if (user != 'AnonymousUser'){
+                 document.getElementById('user-info').innerHTML = ''
+                   }
+                        
+              if (shipping == 'true' && user != 'AnonymousUser'){
+                 //Hide entire form if user is logged in and shipping is false
+               document.getElementById('form-wrapper').classList.add("hidden");
+                 //Show payment if logged in user wants to buy an item that does not require shipping
+                        document.getElementById('payment-info').classList.remove("hidden");
+                        }
+                        
+                        var form = document.getElementById('form')
+                        form.addEventListener('submit', function(e){
+                        e.preventDefault()
+                        console.log('Form Submitted...')
+                        document.getElementById('form-button').classList.add("hidden");
+                        document.getElementById('payment-info').classList.remove("hidden");
+                        })
+                        
+                        
+                        document.getElementById('make-payment').addEventListener('click', function(e){
+                        submitFormData()
+                        })
+                        
+                        
+                        
+                        </script>
+                </div>
+            </div>
+        </div>
+
+</div>
+
+<style>
+.padding{
+      padding: 0rem !important;
+ }
+ 
+.form-control:focus {
+   box-shadow: 10px 0px 0px 0px #ffffff !important;
+   border-color: #4ca746;
+ }
+</style>
+
+
+
+{% endblock content %}

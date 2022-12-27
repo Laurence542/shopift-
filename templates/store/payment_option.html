@@ -1,0 +1,22 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+
+<h1 style="text-align: center">Please choose your payment option</h1>
+<br>
+
+<div class="text-center">
+    <a href="{% url 'creditcard' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Credit card payment</a>
+    <a href="{% url 'pay_on_delivary' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">On delivery payment</a>
+</div>  
+
+
+
+
+
+
+
+
+
+{% endblock content %}
+

@@ -1,0 +1,90 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<body>
+    <!-- Shop Detail Start -->
+    <div class="container-fluid py-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-5 pb-5">
+                <div id="product-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner border">
+                        <div class="carousel-item active">
+                            <img class="w-100 h-100" src="{{product.imageURL}}" alt="Image">
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+                        <i class="fa fa-2x fa-angle-left text-dark"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+                        <i class="fa fa-2x fa-angle-right text-dark"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-7 pb-5">
+                <h3 class="font-weight-semi-bold">{{product.name}}</h3>
+                <div class="d-flex mb-3">
+                    <div class="text-primary mr-2">
+                        <small class="far fa-star"></small>
+                        <small class="far fa-star"></small>
+                        <small class="far fa-star"></small>
+                        <small class="far fa-star"></small>
+                        <small class="far fa-star"></small>
+                    </div>
+                    <small class="pt-1">(0 no reviews yet)</small>
+                </div>
+                <h3 class="font-weight-semi-bold mb-4">Ksh {{product.price}}</h3>
+                <p class="mb-4">{{product.content|slice:":350" }}</p>
+                
+                
+                <div class="d-flex align-items-center mb-4 pt-2">
+                    <button data-product="{{product.id}}" data-action="add"  class="btn btn-outline-secondary add-btn update-cart" class="btn btn-sm text-dark p-0" style="background-color:black" ><i class="fas fa-shopping-cart text-primary mr-1"></i>Add to Cart</button>
+                </div>
+                
+        </div>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="nav nav-tabs justify-content-center border-secondary mb-4">
+                    <a class="nav-item nav-link active" data-toggle="tab" href="#tab-pane-1">Description</a>
+                    <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Reviews (0)</a>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab-pane-1">
+                        <h4 class="mb-3">Product Description</h4>
+                        <p>{{product.content}}</p>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-pane-3">
+                        
+                                <h5 class="mb-4">No reviews yet</h5>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Shop Detail End -->
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>
+{% endblock content %}
