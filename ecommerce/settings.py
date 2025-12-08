@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-@)&4!0qou86^n7fxvpgh6#265#%4^-@$9dzs*a8mw%^38sy65x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['shopift.onrender.com']
+ALLOWED_HOSTS = ['shopift.onrender.com', '127.0.0.1']
 
 
 # Application definition
