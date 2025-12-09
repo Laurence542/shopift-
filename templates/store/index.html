@@ -1,6 +1,8 @@
 {% extends 'store/base.html' %}
 {% load static %}
 {% block content %}
+{% include 'alerts.html' %}
+
 
 
 
@@ -91,7 +93,13 @@
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
                             <a href="{% url 'product_detail' product.slug %}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+
+                            {% if user.is_authenticated %}
                             <button data-product="{{product.id}}" data-action="add"  class="btn btn-outline-secondary add-btn update-cart" class="btn btn-sm text-dark p-0" style="background-color:black" ><i class="fas fa-shopping-cart text-primary mr-1"></i>Add to Cart</button>
+                            {% else %}
+                             <a href="{% url 'logout_account' %}" class="btn btn-primary">Add To Cart</a>
+
+                            {% endif %}
                         </div>
                     </div>
                 </div>

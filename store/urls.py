@@ -6,6 +6,9 @@ from . import views
 urlpatterns = [
 	#Leave as empty string for base url
 	path('', views.store, name="index"),
+    path('create/new/account', views.create_new_account, name='create_new_account'),
+    path('login/account', views.login_account, name='login_account'),
+	path('logout/', views.logout_account, name='logout_account'),
 	path('cart/', views.cart, name="cart"),
 	path('base/', views.store, name="base"),
 	path('pay_on_delivary/',views.pay_on_delivary, name = "pay_on_delivary"),

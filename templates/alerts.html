@@ -1,0 +1,147 @@
+{% if messages %}
+  <style>
+    .custom-alert-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 90%;
+    }
+
+    @media (max-width: 480px) {
+      .custom-alert-container {
+        left: 5%;
+        right: 5%;
+      }
+    }
+
+    @keyframes slideInFade {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOutFade {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+
+    .alert {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      padding: 16px 50px 16px 16px;
+      position: relative;
+      font-size: 0.95rem;
+      border-left: 4px solid;
+      animation: slideInFade 0.5s ease forwards;
+    }
+
+    .slide-out {
+      animation: slideOutFade 0.5s ease forwards;
+    }
+
+    .alert-success {
+      border-color: #28a745;
+    }
+    .alert-danger {
+      border-color: #dc3545;
+    }
+    .alert-info {
+      border-color: #17a2b8;
+    }
+
+    .alert-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .alert-text {
+      flex: 1;
+      color: #333;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #333;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .close-btn:hover {
+      transform: translateY(-50%) scale(1.2);
+      opacity: 0.7;
+    }
+  </style>
+
+  <div class="custom-alert-container" id="alertContainer">
+    {% for message in messages %}
+      <div class="alert alert-item 
+        {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %}" 
+        role="alert">
+        
+        <div class="alert-icon">
+          {% if message.tags == 'success' %}
+            <!-- Check icon -->
+            <svg viewBox="0 0 24 24" fill="#28a745" width="20" height="20">
+              <path d="M20.285,2.859l-11.536,11.537l-5.034-5.035L0,13.076l8.749,8.749L24,6.574L20.285,2.859z"/>
+            </svg>
+          {% elif message.tags == 'error' %}
+            <!-- X icon -->
+            <svg viewBox="0 0 24 24" fill="#dc3545" width="20" height="20">
+              <path d="M18.364 5.636l-1.414-1.414L12 9.172 7.05 4.222 5.636 5.636 10.586 10.586 5.636 15.536l1.414 1.414L12 12.828l4.95 4.95 1.414-1.414-4.95-4.95z"/>
+            </svg>
+          {% else %}
+            <!-- Info icon -->
+            <svg viewBox="0 0 24 24" fill="#17a2b8" width="20" height="20">
+              <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12c6.627 0 12-5.372 12-12S18.627 0 12 0zm.75 18h-1.5v-6h1.5v6zm0-8h-1.5V8h1.5v2z"/>
+            </svg>
+          {% endif %}
+        </div>
+
+        <div class="alert-text">{{ message }}</div>
+        <button type="button" class="close-btn" aria-label="Close">&times;</button>
+      </div>
+    {% endfor %}
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.alert-item').forEach(function(alert) {
+        // Auto dismiss after 4 seconds
+        setTimeout(function() {
+          if (alert) {
+            alert.classList.add('slide-out');
+            setTimeout(function() {
+              alert.remove();
+            }, 500);
+          }
+        }, 4000);
+      });
+
+      document.querySelectorAll('.close-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const alert = btn.closest('.alert-item');
+          if (alert) {
+            alert.classList.add('slide-out');
+            setTimeout(function() {
+              alert.remove();
+            }, 500);
+          }
+        });
+      });
+    });
+  </script>
+{% endif %}

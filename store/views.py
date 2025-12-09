@@ -154,4 +154,57 @@ def processOrder(request):
 
 	return JsonResponse('Payment submitted..', safe=False)
 
-	
+
+
+from django.shortcuts import render, redirect
+from .forms import CustomUserCreationForm
+from django.contrib import messages
+
+
+from .models import Customer
+
+def create_new_account(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Customer.objects.create(user=user)
+            messages.success(request, "Account created successfully!")
+            return redirect('login_account')
+        else:
+            messages.error(request, "An error occurred.")
+    else:
+        form = CustomUserCreationForm()
+
+    return render(request, 'store/create_new_account.html', {'form': form})
+
+
+
+
+from django.contrib.auth import authenticate, login
+
+def login_account(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            messages.success(request, "Logged in successfully!")
+            return redirect("index")  # change to your homepage
+        else:
+            messages.error(request, "Invalid username or password")
+
+    return render(request, "store/login_account.html")
+
+
+
+
+
+from django.contrib.auth import logout
+def logout_account(request):
+    logout(request)
+    messages.success(request, "You have been logged out.")
+    return redirect('login_account')
