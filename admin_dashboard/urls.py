@@ -13,6 +13,8 @@ urlpatterns = [
     path('stock/tracking', views.stock_tracking, name='stock_tracking'),
     path('add/new/category', views.add_new_category, name='add_new_category'),  
     path("category/delete/<int:pk>/", views.delete_category, name="delete_category"),  
+    path('zesha/admin/create/account', views.admin_create_account, name='admin_create_account'),
+    path('zesha/admin/login/account', views.admin_login_account, name='admin_login_account'),
 
 
 ]

@@ -9,6 +9,7 @@ from .utils import cookieCart, cartData, guestOrder
 
 
 
+
 def search_venues(request):
 	if request.method == "POST":
 		searched = request.POST['searched']
@@ -19,9 +20,6 @@ def search_venues(request):
 	else:	
 		return render(request, 'store/search_venues.html',
 		{})
-
-
-
 
 
 
@@ -60,18 +58,19 @@ def store(request):
 
 
 
-
-
-
-
 class PostDetail(generic.DetailView):
     model = Product
     template_name = 'store/product_detail.html'
 
 
 
+
+
 def home(request):
     return render(request, 'store/base.html')  
+
+
+
 
 	# End
 class CatListView(ListView):
@@ -86,12 +85,17 @@ class CatListView(ListView):
         return content
 
 
+
 def category_list(request):
     category_list = Category.objects.exclude(name='default')
     context = {
         "category_list": category_list,
     }
     return context
+
+
+
+
 	
 def cart(request):
 	data = cartData(request)
@@ -102,6 +106,10 @@ def cart(request):
 
 	context = {'items':items, 'order':order, 'cartItems':cartItems}
 	return render(request, 'store/cart.html', context)
+
+
+
+
 
 def payment_option(request):
     return render(request, 'store/payment_option.html') 
