@@ -21,16 +21,48 @@ def search_venues(request):
 		{})
 
 
+
+
+
+
+
+
+
+
+
 def store(request):
-	data = cartData(request)
+    data = cartData(request)
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
 
-	cartItems = data['cartItems']
-	order = data['order']
-	items = data['items']
+    # Get search query
+    query = request.GET.get('q', '')
+    if query:
+        products = Product.objects.filter(
+            name__icontains=query
+        ) | Product.objects.filter(
+            price__icontains=query
+        )
+    else:
+        products = Product.objects.all()
 
-	products = Product.objects.all()
-	context = {'products':products, 'cartItems':cartItems}
-	return render(request, 'store/index.html', context)
+    context = {
+        'products': products,
+        'cartItems': cartItems,
+        'query': query,  # send query back to template
+    }
+    return render(request, 'store/index.html', context)
+
+
+
+
+
+
+
+
+
+
 
 class PostDetail(generic.DetailView):
     model = Product

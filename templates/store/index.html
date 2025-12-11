@@ -70,44 +70,54 @@
 </div>
 <!-- Featured End -->
 
-
+<!-- Search Form -->
+<div class="container pt-5">
+    <form method="GET" class="mb-4 d-flex justify-content-center">
+        <input type="text" name="q" class="form-control w-50" placeholder="Search products by name or price..." value="{{ query }}">
+        <button type="submit" class="btn btn-primary ml-2">Search</button>
+    </form>
+</div>
 
 <!-- Products Start -->
 <div class="container-fluid pt-5">
-	<div class="text-center mb-4">
-		<h2 class="section-title px-5"><span class="px-2">Our Products</span></h2>
-     <div class="row px-xl-5 pb-3">
-		{% for product in products %}
-
-    
-                <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
-                    <div class="card product-item border-0 mb-4">
-                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                            <img class="img-fluid w-100" src="{{product.imageURL}}" alt="">
-                        </div>
-                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                            <h6 class="text-truncate mb-3">{{product.name}}</h6>
-                            <div class="d-flex justify-content-center">
-                                <h6>Ksh {{product.price}}</h6><h6 class="text-muted ml-2"><del>Ksh {{product.initial_price}}</del></h6>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a href="{% url 'product_detail' product.slug %}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-
-                            {% if user.is_authenticated %}
-                            <button data-product="{{product.id}}" data-action="add"  class="btn btn-outline-secondary add-btn update-cart" class="btn btn-sm text-dark p-0" style="background-color:black" ><i class="fas fa-shopping-cart text-primary mr-1"></i>Add to Cart</button>
-                            {% else %}
-                             <a href="{% url 'logout_account' %}" class="btn btn-primary">Add To Cart</a>
-
-                            {% endif %}
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5"><span class="px-2">Our Products</span></h2>
+    </div>
+    <div class="row px-xl-5 pb-3">
+        {% for product in products %}
+            <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                <div class="card product-item border-0 mb-4">
+                    <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                        <img class="img-fluid w-100" src="{{ product.imageURL }}" alt="{{ product.name }}">
+                    </div>
+                    <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                        <h6 class="text-truncate mb-3">{{ product.name }}</h6>
+                        <div class="d-flex justify-content-center">
+                            <h6>Ksh {{ product.price }}</h6>
+                            <h6 class="text-muted ml-2"><del>Ksh {{ product.initial_price }}</del></h6>
                         </div>
                     </div>
+                    <div class="card-footer d-flex justify-content-between bg-light border">
+                        <a href="{% url 'product_detail' product.slug %}" class="btn btn-sm text-dark p-0">
+                            <i class="fas fa-eye text-primary mr-1"></i>View Detail
+                        </a>
+                        {% if user.is_authenticated %}
+                        <button data-product="{{ product.id }}" data-action="add" class="btn btn-outline-secondary add-btn update-cart" style="background-color:black;">
+                            <i class="fas fa-shopping-cart text-primary mr-1"></i>Add to Cart
+                        </button>
+                        {% else %}
+                        <a href="{% url 'logout_account' %}" class="btn btn-primary">Add To Cart</a>
+                        {% endif %}
+                    </div>
                 </div>
-
-       
-		{% endfor %}	
-	</div>		
-</div>			
+            </div>
+        {% empty %}
+            <div class="col-12 text-center">
+                <p>No products found for your search.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
 
 {% endblock content %}
