@@ -1,0 +1,248 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'alerts.html' %}
+
+<style>
+
+html, body {
+    overflow-x: hidden !important;
+}
+
+* {
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+/************ PAGE ************/
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 15px;
+}
+
+h2 {
+    font-weight: 700;
+    color: #222;
+}
+
+/************ GRID ************/
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    width: 100%;
+}
+
+/************ CARD ************/
+.product-card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(16px);
+    padding: 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.35);
+    transition: 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 35px rgba(0,0,0,0.15);
+}
+
+/************ IMAGE ************/
+.product-card img,
+.no-image {
+    width: 100%;
+    height: 230px;
+    border-radius: 14px;
+    object-fit: cover;
+}
+
+.no-image {
+    background: linear-gradient(135deg, #bbb, #999);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #444;
+}
+
+/************ TEXT ************/
+.product-name {
+    margin-top: 12px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #222;
+}
+
+.label {
+    font-weight: 600;
+    color: #333;
+}
+
+.value {
+    color: #555;
+}
+
+.product-price {
+    margin: 5px 0;
+    font-size: 1.05rem;
+    color: #28a745;
+    font-weight: 700;
+}
+
+.old-price {
+    margin-left: 6px;
+    font-size: 0.9rem;
+    text-decoration: line-through;
+    color: #999;
+}
+
+/************ BUTTONS ************/
+.card-footer-btns {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-view, .btn-delete {
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-view { background: #007bff; }
+.btn-delete { background: #dc3545; }
+
+.btn-view:hover, .btn-delete:hover { opacity: 0.85; }
+
+@media (max-width: 480px) {
+    .product-card img, .no-image {
+        height: 180px;
+    }
+}
+
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Customer Orders</h2>
+    <a href="{% url 'view_deliverd_orders' %}" class="btn btn-primary">View Delivered Orders</a>
+    <br><br>
+    <div class="product-grid">
+        {% for p in shipping_address %}
+
+        <div class="product-card">
+
+            <!-- PRODUCT IMAGE -->
+            {% if p.product and p.product.image %}
+                <img src="{{ p.product.image.url }}" alt="{{ p.product.name }}">
+            {% else %}
+                <div class="no-image">No Image</div>
+            {% endif %}
+
+            <!-- PRODUCT NAME -->
+            <div class="product-name">
+                {{ p.product.name }}
+            </div>
+
+            <!-- PRICE -->
+            <div class="product-price">
+                Ksh {{ p.product.price }}
+                {% if p.product.initial_price %}
+                    <span class="old-price">Ksh {{ p.product.initial_price }}</span>
+                {% endif %}
+            </div>
+
+            <!-- PRODUCT CATEGORY -->
+            <p><span class="label">Category:</span> 
+                <span class="value">{{ p.product.category.name }}</span>
+            </p>
+
+            <!-- QUANTITY -->
+            <p><span class="label">Quantity:</span> 
+                <span class="value">{{ p.quantity }}</span>
+            </p>
+
+            <!-- CUSTOMER INFO -->
+            <p><span class="label">Customer:</span> 
+                <span class="value">
+                    {{ p.customer.user.first_name }} {{ p.customer.user.last_name }}
+                </span>
+            </p>
+
+            <!-- ADDRESS -->
+            <p><span class="label">Address:</span> 
+                <span class="value">{{ p.address }}, {{ p.city }}, {{ p.state }} - {{ p.zipcode }}</span>
+            </p>
+
+            <!-- PAYMENT -->
+            <p><span class="label">Payment Method:</span> 
+                <span class="value">{{ p.payment_method }}</span>
+            </p>
+
+            <p><span class="label">Amount Paid:</span> 
+                <span class="value">Ksh {{ p.amount }}</span>
+            </p>
+
+            <!-- ORDER & DATE -->
+            <p><span class="label">Order ID:</span>
+                <span class="value">{{ p.order.id }}</span>
+            </p>
+
+            <p><span class="label">Date Ordered:</span>
+                <span class="value">{{ p.date_added }}</span>
+            </p>
+
+            <!-- STATUS BADGE -->
+            {% if p.status == "Delivered" %}
+                <span style="
+                    background:#28a745;
+                    color:#fff;
+                    padding:5px 10px;
+                    border-radius:6px;
+                    font-size:0.8rem;
+                    font-weight:600;
+                    display:inline-block;
+                    margin-bottom:10px;
+                ">Delivered</span>
+            {% else %}
+                <span style="
+                    background:#ffc107;
+                    color:#000;
+                    padding:5px 10px;
+                    border-radius:6px;
+                    font-size:0.8rem;
+                    font-weight:600;
+                    display:inline-block;
+                    margin-bottom:10px;
+                ">Pending</span>
+            {% endif %}
+
+            <!-- BUTTONS -->
+            <div class="card-footer-btns">
+
+                {% if p.status != "Delivered" %}
+                    <a href="{% url 'mark_delivered' p.id %}" 
+                    class="btn-view"
+                    onclick="return confirm('Mark this order as delivered?');">
+                        Mark as Delivered
+                    </a>
+                {% endif %}
+
+            </div>
+
+
+        </div>
+
+        {% empty %}
+            <p>No customer orders found.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% load stock_filters %}
+{% block content %}
+{% include 'alerts.html' %}
+
+<style>
+/* Page container */
+.stock-container {
+    margin: 30px auto;
+    max-width: 1100px;
+    padding: 20px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 15px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* Page title */
+.stock-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+/* Table styling */
+.stock-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stock-table thead {
+    background: #343a40;
+    color: white;
+}
+
+.stock-table th, .stock-table td {
+    padding: 13px 14px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.stock-table tbody tr:nth-child(even) {
+    background: rgba(255,255,255,0.15);
+}
+
+.stock-table tbody tr:hover {
+    background: rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+/* Badges */
+.badge {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-green {
+    background: #28a745;
+    color: white;
+}
+
+.badge-red {
+    background: #dc3545;
+    color: white;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.pagination a {
+    padding: 8px 14px;
+    background: #007bff;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.pagination .active {
+    background: #0056b3;
+}
+</style>
+
+
+<div class="stock-container">
+    <h2 class="stock-title">Stock Tracking</h2>
+
+    <table class="stock-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Change</th>
+                <th>Previous</th>
+                <th>New Stock</th>
+                <th>Reason</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for s in tracking %}
+            <tr>
+                <td>{{ s.product.name }}</td>
+
+                <td>
+                    {% if s.change < 0 %}
+                        <span class="badge badge-red">-{{ s.change|abs_value }}</span>
+
+                    {% else %}
+                        <span class="badge badge-green">+{{ s.change }}</span>
+                    {% endif %}
+                </td>
+
+                <td>{{ s.previous_stock }}</td>
+                <td>{{ s.new_stock }}</td>
+                <td>{{ s.reason }}</td>
+                <td>{{ s.date|date:"M d, Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center; padding:20px;">
+                    No stock activity yet.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- PAGINATION -->
+    <div class="pagination">
+        {% if tracking.has_previous %}
+            <a href="?page={{ tracking.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <a class="active">{{ tracking.number }}</a>
+
+        {% if tracking.has_next %}
+            <a href="?page={{ tracking.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

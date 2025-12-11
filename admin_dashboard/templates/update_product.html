@@ -1,0 +1,191 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block content %}
+{% include 'alerts.html' %}
+
+
+<style>
+    .form-wrapper {
+        max-width: 900px;
+        margin: 30px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        font-family: "Inter", sans-serif;
+    }
+
+    .form-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #2b2b2b;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #444;
+    }
+
+    input, textarea, select {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #dcdcdc;
+        background: #fafafa;
+        font-size: 1rem;
+        transition: 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        border-color: #4CAF50;
+        background: #fff;
+        outline: none;
+        box-shadow: 0px 0px 4px rgba(76, 175, 80, 0.4);
+    }
+
+    textarea {
+        min-height: 140px;
+        resize: vertical;
+    }
+
+    /* Toggle switch */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 24px;
+        margin-top: 7px;
+    }
+    .switch input {display:none;}
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        background-color: #ccc;
+        border-radius: 24px;
+        top: 0; left: 0;
+        right: 0; bottom: 0;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        border-radius: 50%;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: #4CAF50;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(24px);
+    }
+
+    .submit-btn {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: 0.3s;
+        width: 100%;
+        font-weight: 600;
+        margin-top: 20px;
+    }
+
+    .submit-btn:hover {
+        background: #43a047;
+    }
+</style>
+
+
+<div class="form-wrapper">
+
+    <div class="form-title">Update Product</div>
+
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="grid-2">
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Product name" required value="{{ edit_product.name }}">
+        </div>
+
+        <div class="form-group">
+            <label>Slug</label>
+            <input type="text" name="slug" placeholder="product-slug" required value="{{ edit_product.slug }}">
+        </div>
+
+        <div class="form-group">
+            <label>Price (Current)</label>
+            <input type="number" name="price" step="0.01" placeholder="0.00" required value="{{ edit_product.price }}">
+        </div>
+
+        <div class="form-group">
+            <label>Initial Price</label>
+            <input type="number" name="initial_price" step="0.01" placeholder="0.00" value="{{ edit_product.initial_price }}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Category</label>
+        <select name="category" required>
+            {% for c in categories %}
+            <option value="{{ c.id }}" {% if edit_product.category.id == c.id %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Content / Description</label>
+        <textarea name="content" placeholder="Write product details here..." required>{{ edit_product.content }}</textarea>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label>Digital Product</label>
+        <label class="switch">
+            <input type="checkbox" name="digital" {% if edit_product.digital %}checked{% endif %}>
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="form-group">
+        <label>Product Image</label>
+        {% if edit_product.image %}
+            <img src="{{ edit_product.image.url }}" alt="Product Image" style="max-width:200px; display:block; margin-bottom:10px;">
+        {% endif %}
+        <input type="file" name="image" accept="image/*">
+    </div>
+
+    <button class="submit-btn" type="submit">Update Product</button>
+</form>
+
+
+</div>
+
+{% endblock content %}
+
+

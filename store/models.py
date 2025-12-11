@@ -70,27 +70,38 @@ class Size(models.Model):
 
 
 
+
 class Product(models.Model):
-	name = models.CharField(max_length=200)
-	slug = models.SlugField(max_length=200, unique=True)
-	price = models.FloatField()
-	initial_price = models.FloatField()
-	digital = models.BooleanField(default=False,null=True, blank=True)
-	category = models.ForeignKey(Category, on_delete=models.PROTECT, default=1)
-	content = models.TextField()
-	created_on = models.DateTimeField(auto_now_add=True)
-	image = models.ImageField(null=True, blank=True)
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    price = models.FloatField()
+    initial_price = models.FloatField()
+    digital = models.BooleanField(default=False, null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, default=1)
+    content = models.TextField()
 
-	def __str__(self):
-		return self.name
+    # STOCK FIELD (INTEGER!)
+    number_of_product = models.PositiveIntegerField(default=0)
 
-	@property
-	def imageURL(self):
-		try:
-			url = self.image.url
-		except:
-			url = ''
-		return url
+    # Track if the product is fully out of stock
+    is_finished = models.BooleanField(default=False)
+
+    created_on = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def imageURL(self):
+        try:
+            return self.image.url
+        except:
+            return ""
+
+
+
+
 
 class Order(models.Model):
 	customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
@@ -133,14 +144,54 @@ class OrderItem(models.Model):
 		total = self.product.price * self.quantity
 		return total
 
-class ShippingAddress(models.Model):
-	customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
-	order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
-	address = models.CharField(max_length=200, null=False)
-	city = models.CharField(max_length=200, null=False)
-	state = models.CharField(max_length=200, null=False)
-	zipcode = models.CharField(max_length=200, null=False)
-	date_added = models.DateTimeField(auto_now_add=True)
 
-	def __str__(self):
-		return self.address
+
+
+
+
+
+class ShippingAddress(models.Model):
+    STATUS_CHOICES = (
+        ("Pending", "Pending"),
+        ("Delivered", "Delivered"),
+    )
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)  # NEW
+    quantity = models.IntegerField(null=True, blank=True)  # NEW
+
+    address = models.CharField(max_length=200)
+    city = models.CharField(max_length=200)
+    state = models.CharField(max_length=200)
+    zipcode = models.CharField(max_length=200)
+    
+    payment_method = models.CharField(max_length=200, null=True)
+    number_payment = models.CharField(max_length=200, null=True, blank=True)
+    amount = models.CharField(max_length=100, null=True, blank=True)
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="Pending"
+    )
+    
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.customer} - {self.product}"
+
+
+
+
+
+
+class StockTracking(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    change = models.IntegerField()  # negative values for sales
+    previous_stock = models.IntegerField()
+    new_stock = models.IntegerField()
+    reason = models.CharField(max_length=200)  # e.g., "Order", "Manual Update"
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.product.name} - {self.reason} ({self.change})"

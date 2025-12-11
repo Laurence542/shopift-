@@ -90,15 +90,101 @@ def wishlist1(request):
 def aboutus(request):
     return render(request, 'store/aboutus.html') 		
 
-def checkout(request):
-	data = cartData(request)
-	
-	cartItems = data['cartItems']
-	order = data['order']
-	items = data['items']
 
-	context = {'items':items, 'order':order, 'cartItems':cartItems}
-	return render(request, 'store/checkout.html', context)
+
+
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+
+def checkout(request):
+    data = cartData(request)
+
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
+
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        address = request.POST.get("address")
+        city = request.POST.get("city")
+        state = request.POST.get("state")
+        zipcode = request.POST.get("zipcode")
+        payment_method = request.POST.get("payment_method")
+
+        customer = request.user.customer if request.user.is_authenticated else None
+
+        # ───────────────────────────────
+        # VALIDATE STOCK BEFORE PROCESSING
+        # ───────────────────────────────
+        for item in items:
+            if item.quantity > item.product.number_of_product:
+                messages.error(request, f"Not enough stock for {item.product.name}.")
+                return redirect("cart")
+
+        # ───────────────────────────────
+        # PROCESS ORDER + STOCK TRACKING
+        # ───────────────────────────────
+        for item in items:
+            product = item.product
+
+            # Save shipping entry (per product)
+            ShippingAddress.objects.create(
+                customer=customer,
+                order=order,
+                product=product,
+                quantity=item.quantity,
+                address=address,
+                city=city,
+                state=state,
+                zipcode=zipcode,
+                payment_method=payment_method,
+                number_payment="",
+                amount=item.get_total,
+            )
+
+            # STOCK UPDATE
+            previous_stock = product.number_of_product
+            new_stock = previous_stock - item.quantity
+            product.number_of_product = new_stock
+
+            # Mark as finished if stock is zero
+            if new_stock <= 0:
+                product.is_finished = True
+
+            product.save()
+
+            # TRACK STOCK CHANGE
+            StockTracking.objects.create(
+                product=product,
+                change=-item.quantity,
+                previous_stock=previous_stock,
+                new_stock=new_stock,
+                reason="Order"
+            )
+
+        # COMPLETE ORDER
+        order.complete = True
+        order.save()
+
+        return redirect("confirmation")
+
+    context = {
+        'items': items,
+        'order': order,
+        'cartItems': cartItems
+    }
+    return render(request, 'store/checkout.html', context)
+
+
+
+
+
+
+
 
 def updateItem(request):
 	data = json.loads(request.body)
