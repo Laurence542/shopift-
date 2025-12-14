@@ -6,10 +6,10 @@ import json
 import datetime
 from .models import * 
 from .utils import cookieCart, cartData, guestOrder
+from django.contrib.auth.decorators import login_required
 
 
-
-
+@login_required(login_url='login_account')
 def search_venues(request):
 	if request.method == "POST":
 		searched = request.POST['searched']
@@ -27,7 +27,7 @@ def search_venues(request):
 
 
 
-
+@login_required(login_url='login_account')
 def store(request):
     data = cartData(request)
     cartItems = data['cartItems']
@@ -85,7 +85,7 @@ class CatListView(ListView):
         return content
 
 
-
+@login_required(login_url='login_account')
 def category_list(request):
     category_list = Category.objects.exclude(name='default')
     context = {
@@ -96,7 +96,7 @@ def category_list(request):
 
 
 
-	
+@login_required(login_url='login_account')
 def cart(request):
 	data = cartData(request)
 
@@ -138,7 +138,7 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-
+@login_required(login_url='login_account')
 def checkout(request):
     data = cartData(request)
 
@@ -225,7 +225,7 @@ def checkout(request):
 
 
 
-
+@login_required(login_url='login_account')
 def updateItem(request):
 	data = json.loads(request.body)
 	productId = data['productId']
@@ -251,6 +251,8 @@ def updateItem(request):
 
 	return JsonResponse('Item was added', safe=False)
 
+
+@login_required(login_url='login_account')
 def processOrder(request):
 	transaction_id = datetime.datetime.now().timestamp()
 	data = json.loads(request.body)

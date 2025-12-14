@@ -4,9 +4,10 @@ from django.shortcuts import redirect
 from datetime import timedelta
 from django.utils import timezone
 from django.db.models import Sum, F, Q
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-
+@login_required(login_url='admin_login_account')
 def admin_dashboard(request):
     today = timezone.now().date()
     yesterday = today - timedelta(days=1)
@@ -46,7 +47,7 @@ def admin_dashboard(request):
 
 
 from django.utils.text import slugify
-
+@login_required(login_url='admin_login_account')
 def add_new_product(request):
     categories = Category.objects.all()
 
@@ -97,7 +98,7 @@ def add_new_product(request):
 
 
 
-
+@login_required(login_url='admin_login_account')
 def manage_added_product(request):
     products = Product.objects.all()
     return render(request, 'manage_added_product.html', {"products": products})
@@ -108,7 +109,7 @@ def manage_added_product(request):
 
 from django.shortcuts import get_object_or_404, redirect, render
 from store.models import Product, Category, ShippingAddress
-
+@login_required(login_url='admin_login_account')
 def update_product(request, id):
     edit_product = get_object_or_404(Product, id=id)
     categories = Category.objects.all()  # for category dropdown
@@ -140,7 +141,7 @@ def update_product(request, id):
 
 
 from django.contrib import messages
-
+@login_required(login_url='admin_login_account')
 def delete_product(request, id):
     dlt_product = get_object_or_404(Product, id=id)
     dlt_product.delete()
@@ -151,7 +152,7 @@ def delete_product(request, id):
 
 
 
-
+@login_required(login_url='admin_login_account')
 def customer_orders(request):
     shipping_address = ShippingAddress.objects.filter(status='Pending').order_by('-date_added')
 
@@ -165,7 +166,7 @@ def customer_orders(request):
 
 
 from django.shortcuts import redirect, get_object_or_404
-
+@login_required(login_url='admin_login_account')
 def mark_as_delivered(request, pk):
     address = get_object_or_404(ShippingAddress, id=pk)
     address.status = "Delivered"
@@ -176,7 +177,7 @@ def mark_as_delivered(request, pk):
 
 
 
-
+@login_required(login_url='admin_login_account')
 def view_deliverd_orders(request):
     shipping_address = ShippingAddress.objects.filter(status='Delivered').order_by('-date_added')
 
@@ -195,7 +196,7 @@ def view_deliverd_orders(request):
 
 from django.core.paginator import Paginator
 from store.models import StockTracking
-
+@login_required(login_url='admin_login_account')
 def stock_tracking(request):
     tracking_list = StockTracking.objects.all().order_by('-date')
 
@@ -214,7 +215,7 @@ def stock_tracking(request):
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
-
+@login_required(login_url='admin_login_account')
 def add_new_category(request):
     if request.method == "POST":
         name = request.POST.get("name")
@@ -236,6 +237,10 @@ def add_new_category(request):
     return render(request, "add_new_category.html", context)
 
 
+
+
+
+@login_required(login_url='admin_login_account')
 def delete_category(request, pk):
     category = get_object_or_404(Category, pk=pk)
     category.delete()
@@ -251,6 +256,7 @@ from django.contrib import messages
 
 
 from store.models import Customer
+
 def admin_create_account(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
